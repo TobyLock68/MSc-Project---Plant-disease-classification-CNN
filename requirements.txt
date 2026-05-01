@@ -1,0 +1,10 @@
+#For distortion pipeline
+opencv-python
+albumentations
+
+#General code use
+numpy
+pandas
+torch
+torchvision
+matplotlib
