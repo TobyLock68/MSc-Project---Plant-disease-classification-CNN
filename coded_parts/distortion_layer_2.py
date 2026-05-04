@@ -12,12 +12,17 @@ def add_fog(image):
     return foggy_image
                               
 
-
-
 #image lens flare function
 
 def add_lens_flare(image):
+    transform = album.Compose([
+        album.RandomSunFlare(flare_roi=[0,0,1,0.7], src_radius = 400, src_colour = [255,255,255],
+                             angle_range = [0,1], num_flare_circles_range=[9,10], method = "overlay")
+    ])
+    lens_flare = transform(image = image)['image']
+    return lens_flare
 
+#maybe change method to physics_based
 
 #combining layer 2 distortions
 
