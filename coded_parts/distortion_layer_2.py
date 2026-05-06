@@ -27,4 +27,11 @@ def add_lens_flare(image):
 #combining layer 2 distortions
 
 def apply_layer_2(image):
+    distortions = [None, add_lens_flare, add_fog]
     
+    choice = random.choice(distortions)
+
+    if choice is None:
+        return image
+    
+    return choice(image)
