@@ -52,5 +52,19 @@ def add_light_intensity(image):
 
 def add_noise(image):
 
+    img_float = image.astype(np.float32)
+
+    #Logic for random assignment of gaussian or stochastic noise
+    mode = random.randint(0,1)
+
+    if mode == 1: #stochastic
+        noise = np.random.randint(-30,30, image.shape)
+    else:   #gaussian
+        hyper_p = random.randint(10,50)
+        noise = np.random.normal(0, hyper_p, image.shape)
+    
+    noisy_img = img_float + noise
+
+    return np.clip(noisy_img, 0, 255).astype(np.uint8)
 
 def apply_layer_1(image):
