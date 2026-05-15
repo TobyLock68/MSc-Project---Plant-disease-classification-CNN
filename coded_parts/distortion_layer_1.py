@@ -25,6 +25,29 @@ def manual_motion_blur(image):
     return blurred.astype(np.unit)
 
 def add_light_intensity(image):
+    #HLS section
+    brightness = random.uniform(0.5,1.5)    #dictates whether image gets lighter or darker
+
+    #switches RGB to HLS for easier brightness alteration
+    hls = cv2.cvtColor(image, cv2.COLOR_BGR2HLS).astype(np.float32) 
+    hls[:,:,1] = hls[:,:,1]*brightness
+
+    #returns back to RGB from HLS
+    transition_img = cv2.cvtColor(np.clip(hls, 0, 255).astype(np.uint8),cv2.COLOR_HLS2BGR)
+
+    #Linear blending
+
+    #initialise hyperparameters:
+    alpha = random.uniform(0.9 , 1.1)
+    beta = random.uniform(-10, 10)
+
+    #coverting pixels to floats to avoid errors around 0 - 255
+    img_float = transition_img.astype(np.float32)
+    img_mean = np.mean(img_float)
+
+    blended_img = alpha*img_float + (1-alpha)*img_mean + beta
+
+    return np.clip(blended_img, 0, 255).astype(np.uint8)
 
 
 def add_noise(image):
