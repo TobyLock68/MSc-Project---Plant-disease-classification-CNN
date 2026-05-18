@@ -68,3 +68,16 @@ def add_noise(image):
     return np.clip(noisy_img, 0, 255).astype(np.uint8)
 
 def apply_layer_1(image):
+    distortions = [add_motion_blur, manual_motion_blur, add_light_intensity, add_noise]
+
+    #random selection
+    num_dist = random.randint(1,2)
+    select_dist = random.sample(distortions, num_dist)
+
+    #adding selected distortions sequentially
+    distorted_img = image.copy()
+
+    for effect in select_dist:
+        distorted_img = effect(distorted_img)
+    
+    return distorted_img
