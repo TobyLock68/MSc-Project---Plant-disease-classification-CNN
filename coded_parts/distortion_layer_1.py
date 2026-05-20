@@ -10,7 +10,7 @@ def add_motion_blur(image):
     return cv2.filter2D(image, -1, kernel)
 
 def manual_motion_blur(image):
-    size = random.randit(7,15)
+    size = random.randint(7,15)
     kernel = np.eye(size)/size
 
     blurred = np.zeros_like(image)
@@ -22,7 +22,7 @@ def manual_motion_blur(image):
                 region = padding[y:y+size, x:x+size]
                 blurred[y,x,i] = np.sum(region * kernel)
     
-    return blurred.astype(np.unit)
+    return blurred.astype(np.uint8)
 
 def add_light_intensity(image):
     #HLS section
