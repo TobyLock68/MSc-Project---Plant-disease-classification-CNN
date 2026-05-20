@@ -9,20 +9,20 @@ def add_motion_blur(image):
     kernel = kernel/size        #normalisation to keep image brightness
     return cv2.filter2D(image, -1, kernel)
 
-def manual_motion_blur(image):
-    size = random.randint(7,15)
-    kernel = np.eye(size)/size
+# def manual_motion_blur(image):
+#     size = random.randint(7,15)
+#     kernel = np.eye(size)/size
 
-    blurred = np.zeros_like(image)
+#     blurred = np.zeros_like(image)
 
-    for i in range(3):
-        padding = np.pad(image[:,:,i], size//2, mode = 'edge')
-        for y in range(image.shape[0]):
-            for x in range(image.shape[1]):
-                region = padding[y:y+size, x:x+size]
-                blurred[y,x,i] = np.sum(region * kernel)
+#     for i in range(3):
+#         padding = np.pad(image[:,:,i], size//2, mode = 'edge')
+#         for y in range(image.shape[0]):
+#             for x in range(image.shape[1]):
+#                 region = padding[y:y+size, x:x+size]
+#                 blurred[y,x,i] = np.sum(region * kernel)
     
-    return blurred.astype(np.uint8)
+#     return blurred.astype(np.uint8)
 
 def add_light_intensity(image):
     #HLS section
@@ -68,7 +68,7 @@ def add_noise(image):
     return np.clip(noisy_img, 0, 255).astype(np.uint8)
 
 def apply_layer_1(image):
-    distortions = [add_motion_blur, manual_motion_blur, add_light_intensity, add_noise]
+    distortions = [add_motion_blur, add_light_intensity, add_noise]
 
     #random selection
     num_dist = random.randint(1,2)
