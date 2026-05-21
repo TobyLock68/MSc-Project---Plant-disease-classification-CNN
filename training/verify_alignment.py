@@ -1,4 +1,3 @@
-# training/verify_alignment.py
 import os
 from pathlib import Path
 from dataset_dictionary import PLANTDOC_TO_PLANTVILLAGE
@@ -8,15 +7,10 @@ PV_DIR = ROOT_DIR / "data" / "plantvillage dataset" / "color"
 PD_DIR = ROOT_DIR / "data" / "PlantDoc-Dataset" / "combined_test"
 
 def check_datasets():
-    print("=" * 70)
-    print("🔍 INTERSECTING CLASSES REPORT")
-    print("=" * 70)
-    
-    # Fetch active physical directories on disk
     pv_folders = set(d for d in os.listdir(PV_DIR) if os.path.isdir(PV_DIR / d) and not d.startswith('.'))
     pd_folders = set(d for d in os.listdir(PD_DIR) if os.path.isdir(PD_DIR / d) and not d.startswith('.'))
     
-    # Extract the true intersection based on your verified dictionary
+    # intersecting classes based on dictionary
     active_mappings = {k: v for k, v in PLANTDOC_TO_PLANTVILLAGE.items() if k in pd_folders and v in pv_folders}
     
     print(f"PlantVillage physical classes: {len(pv_folders)}")
@@ -26,7 +20,7 @@ def check_datasets():
     print("LIST OF INTERSECTING CLASSES:")
     
     for idx, (pd_name, pv_name) in enumerate(sorted(active_mappings.items()), 1):
-        print(f" {idx:2d}. PlantDoc: '{pd_name}' ──► PlantVillage: '{pv_name}'")
+        print(f" {idx:2d}. PlantDoc: '{pd_name}' ── PlantVillage: '{pv_name}'")
         
     print("=" * 70)
 
