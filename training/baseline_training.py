@@ -65,5 +65,23 @@ model.fc = nn.Linear(in_features, 38)
 
 model = model.to(device)    #sends to previously defined GPU if available
 
-optimizer = optim.Adam(model.fc.parameters(), lr=0.001)     #targeted training and learning algorithm
+optimiser = optim.Adam(model.fc.parameters(), lr=0.001)     #targeted training and learning algorithm
 criteria = nn.CrossEntropyLoss()    #loss function (how wrong models guess was)
+
+#--------- ACTTUAL TRAINING CODE -------------
+
+best_validation_accuracy = 0.0
+best_weights = copy.deepcopy(model.state_dict())
+
+for epoch in range (1,16):      #15 training epochs for each fold as per literature
+    model.train()
+    for input, batch_labels in train_loader:
+        inputs, batch_labels = inputs.to(device), batch_labels.to(device)
+
+        optimiser.zero_grad()       #removes previous gradients
+        outputs = model(inputs)     #forward pass
+        loss =criteria(outputs, batch_labels)
+        loss.backward()     #backward pass
+        optimiser.step()        #update weights
+
+        #validation stage within the training loop
