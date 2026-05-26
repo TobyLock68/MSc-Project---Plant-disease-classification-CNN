@@ -11,15 +11,15 @@ def check_datasets():
     pd_folders = set(d for d in os.listdir(PD_DIR) if os.path.isdir(PD_DIR / d) and not d.startswith('.'))
     
     # intersecting classes based on dictionary
-    active_mappings = {k: v for k, v in PLANTDOC_TO_PLANTVILLAGE.items() if k in pd_folders and v in pv_folders}
+    intersects = {k: v for k, v in PLANTDOC_TO_PLANTVILLAGE.items() if k in pd_folders and v in pv_folders}
     
     print(f"PlantVillage physical classes: {len(pv_folders)}")
     print(f"PlantDoc physical classes:     {len(pd_folders)}")
-    print(f"Exact matching classes found:   {len(active_mappings)}")
+    print(f"Exact matching classes found:   {len(intersects)}")
     print("-" * 70)
     print("LIST OF INTERSECTING CLASSES:")
     
-    for idx, (pd_name, pv_name) in enumerate(sorted(active_mappings.items()), 1):
+    for idx, (pd_name, pv_name) in enumerate(sorted(intersects.items()), 1):
         print(f" {idx:2d}. PlantDoc: '{pd_name}' ── PlantVillage: '{pv_name}'")
         
     print("=" * 70)
