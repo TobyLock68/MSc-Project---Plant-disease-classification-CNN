@@ -85,3 +85,16 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
         optimiser.step()        #update weights
 
         #validation stage within the training loop
+
+        model.eval()
+        validation_correct = 0
+        with torch.no_grad():
+            for inputs, batch_labels in validation_loader:
+                inputs, batch_labels = inputs.to(device), batch_labels.to(device)
+                outputs = model(inputs)
+                _, preds = torch.max(outputs, 1)
+                validation_correct += torch.sum(preds ==  batch_labels.data)
+        
+        epoch_accuracy = validation_correct.double() / len(val_idx)
+
+        print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f})
