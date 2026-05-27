@@ -97,4 +97,4 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
         
         epoch_accuracy = validation_correct.double() / len(val_idx)
 
-        print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f})
+        #print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f})
