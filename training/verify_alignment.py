@@ -2,6 +2,9 @@ import os
 from pathlib import Path
 from dataset_dictionary import PLANTDOC_TO_PLANTVILLAGE
 
+
+#CHECKS TO SEE THE OVERLAPPING CLASSES AFTER DATASET RE-LABELLING TO ENSURE ENOUGH OVERLAP FOR TRAINING
+
 ROOT_DIR = Path(__file__).parent.parent
 PV_DIR = ROOT_DIR / "data" / "plantvillage dataset" / "color"
 PD_DIR = ROOT_DIR / "data" / "PlantDoc-Dataset" / "combined_test"
@@ -26,6 +29,6 @@ def check_datasets():
 
 if __name__ == "__main__":
     if not PV_DIR.exists() or not PD_DIR.exists():
-        print(f"❌ Path Error: Ensure your folders exist at:\n   {PV_DIR}\n   {PD_DIR}")
+        print(f"Path Error: Ensure your folders exist at:\n   {PV_DIR}\n   {PD_DIR}")
     else:
         check_datasets()
