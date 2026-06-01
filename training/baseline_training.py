@@ -98,3 +98,16 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
         epoch_accuracy = validation_correct.double() / len(val_idx)
 
         #print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f})
+
+        #tracking the best weights for each fold
+        if epoch_accuracy > best_validation_accuracy:
+            best_validation_accuracy = epoch_accuracy
+            best_weights = copy.deepcopy(model.state_dict())
+
+        fold_accuracies.append(best_validation_accuracy.item())
+
+        #not necessary but want somewhere to note best accuracies
+        if fold == 5:
+            torch.save(best_weights, model_save_dir/"baseline_training_accuracies")
+
+        print(f"Training finished. Average accuracy = {np.mean(fold_accuracies):.4f}\n")
