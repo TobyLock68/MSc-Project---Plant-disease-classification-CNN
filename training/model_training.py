@@ -56,7 +56,7 @@ for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
 
 
 #model setup
-model = models.resnet50(weights = model.ResNet50_Weights.DEFAULT)
+model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
 
 #freezing of convolutional layers 
 for param in model.parameters():
