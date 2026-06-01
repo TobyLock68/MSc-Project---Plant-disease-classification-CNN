@@ -10,7 +10,12 @@ from sklearn.model_selection import StratifiedKFold
 
 #directory and hardware setup
 root_dir = Path(__file__).parent.parent
+
+#different directories for augmented and baseline data
 plantvil_dir = root_dir/"data"/"plantvillage dataset"/ "color"
+#plantvil_dir = root_dir/"data"/"plantvillage_augmented"
+
+
 model_save_dir = root_dir/"models"
 model_save_dir.mkdir(exist_ok=True)
 
@@ -106,8 +111,10 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
 
         fold_accuracies.append(best_validation_accuracy.item())
 
-        #not necessary but want somewhere to note best accuracies
+        #not necessary but want somewhere to note best accuracies for both baseline and augmented
         if fold == 5:
             torch.save(best_weights, model_save_dir/"baseline_training_accuracies")
+            #torch.save(best_weights, model_save_dir/"augmented_training_accuracies")
+
 
         print(f"Training finished. Average accuracy = {np.mean(fold_accuracies):.4f}\n")
