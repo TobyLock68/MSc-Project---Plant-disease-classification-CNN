@@ -41,4 +41,4 @@ if __name__ == "__main__":
 
     with multiprocessing.Pool(processes=num_cores) as pool:
         pool.map(distort_single_image, image_paths)
-    print(f"--- PIPELINE FULLY RUN ---")
+    print(f"------- PIPELINE FULLY RUN ------------")
