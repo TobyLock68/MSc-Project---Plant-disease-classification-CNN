@@ -8,3 +8,4 @@ pandas
 torch
 torchvision
 matplotlib
+scikit-learn
