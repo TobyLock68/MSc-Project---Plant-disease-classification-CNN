@@ -111,7 +111,7 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
 
         fold_accuracies.append(best_validation_accuracy.item())
 
-        #not necessary but want somewhere to note best accuracies for both baseline and augmented
+        #want somewhere to note best accuracies for both baseline and augmented
         if fold == 5:
             torch.save(best_weights, model_save_dir/"baseline_training_accuracies.pth")
             #torch.save(best_weights, model_save_dir/"augmented_training_accuracies.pth")
