@@ -28,7 +28,7 @@ def distort_single_image(path):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
     cv2.imwrite(save_path, distorted_img)
-    print(f"--- SAVED IMAGE TO: {save_path} ---")
+    # print(f"--- SAVED IMAGE TO: {save_path} ---")         #test print line for test data
 
 
 if __name__ == "__main__":
