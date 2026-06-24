@@ -19,7 +19,7 @@ plantvil_dir = root_dir/"data"/"plantvillage dataset"/ "color"
 model_save_dir = root_dir/"models"
 model_save_dir.mkdir(exist_ok=True)
 
-#checks if better gpu hardware available (scalable not useful for me)
+#checks if better gpu hardware available (may or may not work on my mac)
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
 #data/ image preparation:
