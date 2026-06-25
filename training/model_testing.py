@@ -1,4 +1,6 @@
 import torch
+import random
+import numpy as np
 import os
 from pathlib import Path
 import torchvision.models as models
@@ -6,6 +8,17 @@ import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 from dataset_dictionary import PLANTDOC_TO_PLANTVILLAGE
+from sklearn.metrics import precision_recall_fscore_support
+
+def seed_reproducibility(seed=42):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.backends.mps.is_available():
+        torch.mps.manual_seed(seed)
+
+seed_reproducibility(42)
 
 #same starting code as training with slight name change
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
@@ -52,25 +65,44 @@ def model_eval(weight_file_path):
     model = model.to(device)
     model.eval()
 
-    #setting up of variables to track accuracy
-    correct = 0
-    total = 0
+    #setting up of variables to track metrics
+    all_preds = []
+    targets = []
 
     with torch.no_grad():
         for inputs, labels in test_loader:          #begins loop pf batched images
             inputs, labels = inputs.to(device), labels.to(device)
             outputs = model(inputs)         #forward pass
             _, preds = torch.max(outputs, 1)        #disctates the class/prediction
+
             mapped_labels = torch.tensor([pd_to_pv_idx[l.item()] for l in labels]).to(device)
             valid = mapped_labels != -1
             
             if valid.sum() > 0:
-                correct += (preds[valid] == mapped_labels[valid]).sum().item()
-                total += valid.sum().item()
-    
+                all_preds.extend(preds[valid].cpu().numpy())
+                targets.extend(mapped_labels[valid].cpu().numpy())
+            
+    #convert arrays to Numpy format
+    all_preds = np.array(all_preds)
+    targets = np.array(targets)
+    total = len(targets)
+
+    #accuracy
+    correct = (all_preds == targets).sum()
     accuracy = (correct/total)*100 if total > 0 else 0.0
 
+    #recall, precision and F1-score using Scikit leanr
+
+    precision, recall, f1_score, _ = precision_recall_fscore_support(
+        targets, all_preds, average='macro', zero_division=0
+    )
+
     print(f"Accuracy for {weight_file_path} on PlantDoc test = {accuracy:.2f}%")
+    print(f"Recall for {weight_file_path} on PlantDoc test = {recall:.2f}%")
+    print(f"Precision for {weight_file_path} on PlantDoc test = {precision:.2f}%")
+    print(f"F1-score for {weight_file_path} on PlantDoc test = {f1_score:.2f}%")
+
+
     return accuracy
 
 #run baseline and augemented in parallel
