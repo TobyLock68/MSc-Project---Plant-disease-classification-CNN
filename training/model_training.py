@@ -1,4 +1,6 @@
 import copy
+import os
+import random
 import numpy as np
 import torch
 import torch.nn as nn
@@ -7,6 +9,16 @@ from pathlib import Path
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets, transforms, models
 from sklearn.model_selection import StratifiedKFold
+
+def seed_reproducibility(seed=42):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.backends.mps.is_available():
+        torch.mps.manual_seed(seed)
+
+seed_reproducibility(42)
 
 #directory and hardware setup
 root_dir = Path(__file__).parent.parent
@@ -53,43 +65,42 @@ for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
     #preps data subsets to be fed into model
     train_loader = DataLoader(train_subset, batch_size=32, shuffle=True)
     validation_loader = DataLoader(validation_subset, batch_size=32, shuffle=False)
+    
+    #model setup
+    model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
 
+    #freezing of convolutional layers 
+    for param in model.parameters():
+        param.requires_grad = False
 
-#model setup
-model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
+    #global average pooling 
+    in_features = model.fc.in_features
 
-#freezing of convolutional layers 
-for param in model.parameters():
-    param.requires_grad = False
+    #replacement of 1000-output layer to our max of 38 classes and apply softmax
+    model.fc = nn.Linear(in_features, 38)
 
-#global average pooling 
-in_features = model.fc.in_features
+    model = model.to(device)    #sends to previously defined GPU if available
 
-#replacement of 1000-output layer to our max of 38 classes and apply softmax
-model.fc = nn.Linear(in_features, 38)
+    optimiser = optim.Adam(model.fc.parameters(), lr=0.001)     #targeted training and learning algorithm
+    criteria = nn.CrossEntropyLoss()    #loss function (how wrong models guess was)
 
-model = model.to(device)    #sends to previously defined GPU if available
+    #--------- ACTTUAL TRAINING CODE -------------
 
-optimiser = optim.Adam(model.fc.parameters(), lr=0.001)     #targeted training and learning algorithm
-criteria = nn.CrossEntropyLoss()    #loss function (how wrong models guess was)
+    best_validation_accuracy = 0.0
+    best_weights = copy.deepcopy(model.state_dict())
 
-#--------- ACTTUAL TRAINING CODE -------------
+    for epoch in range (1,16):      #15 training epochs for each fold as per literature
+        model.train()
+        for inputs, batch_labels in train_loader:
+            inputs, batch_labels = inputs.to(device), batch_labels.to(device)
 
-best_validation_accuracy = 0.0
-best_weights = copy.deepcopy(model.state_dict())
+            optimiser.zero_grad()       #removes previous gradients
+            outputs = model(inputs)     #forward pass
+            loss =criteria(outputs, batch_labels)
+            loss.backward()     #backward pass
+            optimiser.step()        #update weights
 
-for epoch in range (1,16):      #15 training epochs for each fold as per literature
-    model.train()
-    for input, batch_labels in train_loader:
-        inputs, batch_labels = inputs.to(device), batch_labels.to(device)
-
-        optimiser.zero_grad()       #removes previous gradients
-        outputs = model(inputs)     #forward pass
-        loss =criteria(outputs, batch_labels)
-        loss.backward()     #backward pass
-        optimiser.step()        #update weights
-
-        #validation stage within the training loop
+            #validation stage within the training loop
 
         model.eval()
         validation_correct = 0
@@ -100,7 +111,7 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
                 _, preds = torch.max(outputs, 1)
                 validation_correct += torch.sum(preds ==  batch_labels.data)
         
-        epoch_accuracy = validation_correct.double() / len(val_idx)
+        epoch_accuracy = (validation_correct.double() / len(val_idx)).item()
 
         #print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f})
 
@@ -109,12 +120,12 @@ for epoch in range (1,16):      #15 training epochs for each fold as per literat
             best_validation_accuracy = epoch_accuracy
             best_weights = copy.deepcopy(model.state_dict())
 
-        fold_accuracies.append(best_validation_accuracy.item())
+    fold_accuracies.append(best_validation_accuracy)
 
-        #want somewhere to note best accuracies for both baseline and augmented
-        if fold == 5:
-            torch.save(best_weights, model_save_dir/"baseline_training_accuracies.pth")
-            #torch.save(best_weights, model_save_dir/"augmented_training_accuracies.pth")
+    #want somewhere to note best accuracies for both baseline and augmented
+    if fold == 5:
+        torch.save(best_weights, model_save_dir/"baseline_training_accuracies.pth")
+        #torch.save(best_weights, model_save_dir/"augmented_training_accuracies.pth")
 
 
-        print(f"Training finished. Average accuracy = {np.mean(fold_accuracies):.4f}\n")
+    print(f"Training finished. Average accuracy = {np.mean(fold_accuracies):.4f}\n")
