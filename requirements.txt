@@ -1,9 +1,9 @@
-#For distortion pipeline
+# For distortion pipeline
 opencv-python
-albumentations
+albumentations>=1.4.0,<2.0.0
 
-#General code use
-numpy
+# General code use
+numpy>=1.24.0,<2.0.0
 pandas
 torch
 torchvision
