@@ -24,7 +24,10 @@ seed_reproducibility(42)
 root_dir = Path(__file__).parent.parent
 
 #different directories for augmented and baseline data
+experiment_name = "baseline"
 plantvil_dir = root_dir/"data"/"plantvillage dataset"/ "color"
+
+#experiment_name = "augmented"
 #plantvil_dir = root_dir/"data"/"plantvillage_augmented"
 
 
@@ -57,6 +60,7 @@ fold_accuracies = []    #stores accuracies to given baseline at end
 fold_splits = skf.split(X=np.zeros(len(num_labels)), y = num_labels)
 
 for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
+    print(f"K-Fold Progress: Fold {fold}/5 ({experiment_name})")
 
     #creates the data subsets
     train_subset = Subset(data, train_idx)
@@ -113,7 +117,7 @@ for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
         
         epoch_accuracy = (validation_correct.double() / len(val_idx)).item()
 
-        #print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f})
+        print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f}")
 
         #tracking the best weights for each fold
         if epoch_accuracy > best_validation_accuracy:
@@ -122,10 +126,9 @@ for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
 
     fold_accuracies.append(best_validation_accuracy)
 
-    #want somewhere to note best accuracies for both baseline and augmented
-    if fold == 5:
-        torch.save(best_weights, model_save_dir/"baseline_training_accuracies.pth")
-        #torch.save(best_weights, model_save_dir/"augmented_training_accuracies.pth")
+    model_filename = f"resnet50_{experiment_name}_fold_{fold}.pth"
+    torch.save(best_weights, model_save_dir / model_filename)
+    print(f"Optimal weights for fold saved: models/{model_filename}")
 
 
-    print(f"Training finished. Average accuracy = {np.mean(fold_accuracies):.4f}\n")
+print(f"Training finished. Average accuracy = {np.mean(fold_accuracies):.4f}\n")
