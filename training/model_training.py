@@ -69,8 +69,8 @@ for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
     validation_subset = Subset(data, val_idx)
 
     #preps data subsets to be fed into model
-    train_loader = DataLoader(train_subset, batch_size=32, shuffle=True)
-    validation_loader = DataLoader(validation_subset, batch_size=32, shuffle=False)
+    train_loader = DataLoader(train_subset, batch_size=32, shuffle=True, num_workers=4, pin_memory=True)
+    validation_loader = DataLoader(validation_subset, batch_size=32, shuffle=False, num_workers=4, pin_memory=True)
     
     #model setup
     model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
@@ -97,14 +97,18 @@ for fold, (train_idx, val_idx) in enumerate(fold_splits, start = 1):
 
     for epoch in range (1,16):      #15 training epochs for each fold as per literature
         model.train()
-        for inputs, batch_labels in train_loader:
-            inputs, batch_labels = inputs.to(device), batch_labels.to(device)
+
+        for batch_idx, (inputs, batch_labels) in enumerate(train_loader, start=1):
+            inputs, batch_labels = inputs.to(device, non_blocking=True), batch_labels.to(device, non_blocking=True)
 
             optimiser.zero_grad()       #removes previous gradients
             outputs = model(inputs)     #forward pass
             loss =criteria(outputs, batch_labels)
             loss.backward()     #backward pass
             optimiser.step()        #update weights
+
+            if batch_idx % 100 == 0 or batch_idx == len(train_loader):
+                print(f" EPOCH = {epoch}/15 --- Batch {batch_idx}/{len(train_loader)}")
 
             #validation stage within the training loop
 
