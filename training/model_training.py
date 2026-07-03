@@ -9,6 +9,8 @@ from pathlib import Path
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets, transforms, models
 from sklearn.model_selection import StratifiedKFold
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
 
 def seed_reproducibility(seed=42):
     random.seed(seed)
