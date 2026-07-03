@@ -22,12 +22,16 @@ def seed_reproducibility(seed=42):
 
 seed_reproducibility(42)
 
-#directory and hardware setup
-root_dir = Path(__file__).parent.parent
-
-#different directories for augmented and baseline data
+#directory setup for google colab
+root_dir = Path("/content")
 experiment_name = "baseline"
-plantvil_dir = root_dir/"data"/"plantvillage dataset"/ "color"
+plantvil_dir = root_dir/"plantvillage dataset"/ "color"
+
+#directory and hardware setup for local
+#root_dir = Path(__file__).parent.parent
+#different directories for augmented and baseline data
+#experiment_name = "baseline"
+#plantvil_dir = root_dir/"data"/"plantvillage dataset"/ "color"
 
 #experiment_name = "augmented"
 #plantvil_dir = root_dir/"data"/"plantvillage_augmented"
@@ -37,7 +41,13 @@ model_save_dir = root_dir/"models"
 model_save_dir.mkdir(exist_ok=True)
 
 #checks if better gpu hardware available (may or may not work on my mac)
-device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+#device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
+
+#google colab
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+if torch.cuda.is_available():
+    torch.backends.cudnn.benchmark = True
+
 
 #data/ image preparation:
 img_transformation = transforms.Compose([
