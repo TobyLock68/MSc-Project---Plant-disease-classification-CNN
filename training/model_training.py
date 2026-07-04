@@ -27,12 +27,16 @@ root_dir = Path("/content")
 experiment_name = "baseline"
 plantvil_dir = root_dir/"plantvillage dataset"/ "color"
 
+experiment_name = "augmented"
+plantvil_dir = root_dir/"plantvillage_augmented"
+
+
 #directory and hardware setup for local
+
 #root_dir = Path(__file__).parent.parent
 #different directories for augmented and baseline data
 #experiment_name = "baseline"
 #plantvil_dir = root_dir/"data"/"plantvillage dataset"/ "color"
-
 #experiment_name = "augmented"
 #plantvil_dir = root_dir/"data"/"plantvillage_augmented"
 
