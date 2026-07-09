@@ -132,6 +132,4 @@ drive.mount('/content/drive')
 print("Augmented Dataset unzipped!")
 ```
 
-
-
 #### Step 4: Paste and execute the training code
