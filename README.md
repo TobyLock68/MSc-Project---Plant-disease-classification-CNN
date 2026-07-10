@@ -1,6 +1,6 @@
  # MSc Project: Enhancing CNN robustness using an image distorting pipeline to create synthetically distorted dataset
 
-An advanced computer vision pipeline designed to classify plant diseases across 38 distinct categories using a ResNet50 architecture. This project systematically investigates model robustness and domain generalization by comparing a baseline performance framework against a dual-layer stochastic environmental distortion training pipeline.
+A computer vision pipeline designed to classify plant diseases across 38 distinct categories using a ResNet50 architecture. This project systematically investigates model robustness and domain generalization by comparing a baseline performance framework against a dual-layer stochastic environmental distortion training pipeline.
 
 ---
 
@@ -45,7 +45,7 @@ MSc-Project---Plant-disease-classification-CNN/
 ├── README.md                       # Project overview doc
 ├── requirements.txt                # Project dependencies
 └── run-pipeline.py                 # Script to construct the augmented dataset
- 
+```
 
 
 
@@ -133,3 +133,34 @@ print("Augmented Dataset unzipped!")
 ```
 
 #### Step 4: Paste and execute the training code
+Copy the entire training script into the Colab notebook ensuring the hardware targets the NVIDIA hardware acceleration. All the code is present under commented sections labelled Colab but should look similar to the beloew:
+
+```bash
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Active Hardware Accelerator: {device}")
+```
+It is important to check the correct pathways are setup for the dataset to be trained: 
+e.g.
+
+```bash
+root_dir = Path("/content")
+experiment_name = "augmented"  # Change to "baseline" or "augmented" depending on your run
+plantvil_dir = root_dir / "plantvillage_augmented" #change dataset name depending on run
+```
+
+Running the cell will result in the 5-fold cross validation training to execute and saves new **.pth** files containing weights for each independent fold
+
+## Model testing
+
+Once the training has been completed download and drop the saved **.pth** files into the local **models/** folder on VS_code. From here we can run the **model_testing.py** file which tests the two trained models on the unseen PlantDoc dataset. 
+
+The code once again can be run on a local machine but was altered to run on Google Colab to significantly reduce runtime. 
+
+If running local simply copy and execute the following command in the terminal:
+
+```bash
+python3 training/model_testing.py
+```
+-- Need to write about whether or not the code uses all 5 folds 
+-- Need to add the colab optimisation
+-- Talk about performance metrics produced
