@@ -40,7 +40,7 @@ plantvil_dir = root_dir/"plantvillage_augmented"
 #experiment_name = "augmented"
 #plantvil_dir = root_dir/"data"/"plantvillage_augmented"
 
-
+#saves model weights to models folder
 model_save_dir = root_dir/"models"
 model_save_dir.mkdir(exist_ok=True)
 
