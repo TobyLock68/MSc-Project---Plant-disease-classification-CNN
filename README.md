@@ -123,7 +123,7 @@ Runtime ➔ Change runtime type ➔ Hardware Accelerator ➔ T4
 Paste and execute the following code block into Google Colab. This allows Colab to connect to your personal cloud/ Drive files and unzip the dataset ready for use.
 
 ```bash
-# 1. Mount Google Drive (it will pop up asking for permission)
+# 1. Mount Google Drive (pop up will ask for permission)
 from google.colab import drive
 drive.mount('/content/drive')
 
