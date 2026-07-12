@@ -129,43 +129,48 @@ def model_eval(experiment, best_fold_idx):
                 accum_probs = torch.zeros((batch_size, 38), device=device)
                 for model in model_list:
                     outputs = model(inputs)
+                    accum_probs += torch.softmax(outputs, dim=1)
 
+                _, ens_preds = torch.max(accum_probs, 1)
 
-
-
-
-            outputs = model(inputs)         #forward pass
-            _, preds = torch.max(outputs, 1)        #disctates the class/prediction
-
-
-            
-            if valid.sum() > 0:
-                all_preds.extend(preds[valid].cpu().numpy())
+                #store the matching classification parts
+                best_fold_preds.extend(b_preds[valid].cpu().numpy())
+                ensemble_preds.extend(ens_preds[valid].cpu().numpy())
                 targets.extend(mapped_labels[valid].cpu().numpy())
-            
-    #convert arrays to Numpy format
-    all_preds = np.array(all_preds)
+    
+    #convert to numpy strucrture
+    best_fold_preds = np.array(best_fold_preds)
+    ensemble_preds = np.array(ensemble_preds)
     targets = np.array(targets)
     total = len(targets)
 
-    #accuracy
-    correct = (all_preds == targets).sum()
-    accuracy = (correct/total)*100 if total > 0 else 0.0
+    #funtion for performance metrics
+
+    def metric_summary(preds, label_text):
+        correct = (preds == targets).sum()
+        accuracy = (correct/total)*100 if total > 0 else 0.0
 
     #recall, precision and F1-score using Scikit leanr
 
-    precision, recall, f1_score, _ = precision_recall_fscore_support(
-        targets, all_preds, average='macro', zero_division=0
-    )
+        precision, recall, f1_score, _ = precision_recall_fscore_support(
+            targets, preds, average='macro', zero_division=0
+        )
 
-    print(f"Accuracy for {weight_file_path} on PlantDoc test = {accuracy:.2f}%")
-    print(f"Recall for {weight_file_path} on PlantDoc test = {recall:.2f}%")
-    print(f"Precision for {weight_file_path} on PlantDoc test = {precision:.2f}%")
-    print(f"F1-score for {weight_file_path} on PlantDoc test = {f1_score:.2f}%")
+        print(f"Accuracy for {label_text} on PlantDoc test = {accuracy:.2f}%")
+        print(f"Recall for {label_text} on PlantDoc test = {recall:.2f}%")
+        print(f"Precision for {label_text} on PlantDoc test = {precision:.2f}%")
+        print(f"F1-score for {label_text} on PlantDoc test = {f1_score:.2f}%")
 
+        return accuracy
 
-    return accuracy
+    print("Metric breakdown for BEST SINGLE FOLD:")
+    best_acc = metric_summary(best_fold_preds, f"{experiment}_fold_{best_fold_idx}.pth")
+
+    print("Metric breakdown for ENSEMBLE METHOD:")
+    ensemble_acc = metric_summary(ensemble_preds, f"{experiment}_ensemble")
+
+    return best_acc, ensemble_acc
 
 #run baseline and augemented in parallel
-baseline_test_acc = model_eval("baseline_training_accuracies.pth")
-augmented_test_acc = model_eval("augmented_training_accuracies.pth")
+baseline_best, baseline_ensemble = model_eval("resnet50_baseline", baseline_best_fold)
+augmented_best, augemented_ensemble = model_eval("resnet50_augmented", augemented_best_fold)
