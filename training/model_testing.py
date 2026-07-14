@@ -80,10 +80,9 @@ for pd_idx, pd_name in enumerate(plantdoc_data.classes):
 
 #function to load and test model weights
 def model_eval(experiment, best_fold_idx):
-    '''
-    Loads all of our model folds for each experiment and runs an ensemble method, taking average weights across
-    all folds, and an isolated method, using the fold with the highest accuracy.
-    '''
+    
+    #Runs and ensemble method using average training weights from each fold, also runs a best fold testing
+    
     #shortened model setup as we are passing weights to the model from training
     model_list = []
 
