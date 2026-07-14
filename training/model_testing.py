@@ -8,7 +8,8 @@ import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 from dataset_dictionary import PLANTDOC_TO_PLANTVILLAGE
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 #same starting code as training with slight name change
 
@@ -108,7 +109,9 @@ def model_eval(experiment, best_fold_idx):
 
     #metric calculation tracking variables
     best_fold_preds = []
+    best_fold_probs = []
     ensemble_preds = []
+    ensemble_probs = []
     targets = []
 
     with torch.no_grad():
@@ -122,6 +125,7 @@ def model_eval(experiment, best_fold_idx):
             if valid.sum() > 0:
                 best_outputs = best_model(inputs)
                 _, b_preds = torch.max(best_outputs, 1)
+                b_probs = torch.softmax(best_outputs, 1)
 
                 # --- Ensemble approach ----
 
@@ -131,17 +135,54 @@ def model_eval(experiment, best_fold_idx):
                     accum_probs += torch.softmax(outputs, dim=1)
 
                 _, ens_preds = torch.max(accum_probs, 1)
+                ens_probs = accum_probs/ len(model_list)
 
                 #store the matching classification parts
                 best_fold_preds.extend(b_preds[valid].cpu().numpy())
                 ensemble_preds.extend(ens_preds[valid].cpu().numpy())
                 targets.extend(mapped_labels[valid].cpu().numpy())
+                best_fold_probs.extend(b_probs[valid].cpu().numpy())
+                ensemble_probs.extend(ens_probs[valid].cpu().numpy())
+
     
     #convert to numpy strucrture
     best_fold_preds = np.array(best_fold_preds)
     ensemble_preds = np.array(ensemble_preds)
     targets = np.array(targets)
     total = len(targets)
+    best_fold_probs = np.array(best_fold_probs)
+    ensemble_probs = np.array(ensemble_probs)
+
+    #saving raw data for later AUC graph 
+    save_path = model_save_dir / f"{experiment}_eval_data.npz"
+
+    np.savez(
+        save_path,
+        targets=targets,
+        best_fold_preds=best_fold_preds,
+        best_fold_probs=best_fold_probs,
+        ensemble_preds=ensemble_preds,
+        ensemble_probs=ensemble_probs
+    )
+
+    print(f"RAW DATA SAVE TO: {save_path}")
+
+    #function for confusion matrix
+    def confusion_matrix_print(preds, label_text):
+        unique_classes = np.unique(targets)
+        current_classes = [pv_classes_sort[idx] for idx in unique_classes]
+
+        con_mat = confusion_matrix(targets, preds, labels = unique_classes)
+        print(f"\n CONFUSION MATRIX BREAKDOWN ({label_text})")
+        print(f"{'Class Name':<40} | {'TP':<5} | {'FP':<5} | {'FN':<5} | {'TN':<5}")
+
+        for i, name in enumerate(current_classes):
+            tp = con_mat[i, i]
+            fn = np.sum(con_mat[i, :]) - tp
+            fp = np.sum(con_mat[:, i]) - tp
+            tn = np.sum(con_mat) - (tp + fp + fn)
+
+            print(f"{name:<40} | {tp:<5} | {fp:<5} | {fn:<5} | {tn:<5}")
 
     #funtion for performance metrics
 
@@ -164,9 +205,11 @@ def model_eval(experiment, best_fold_idx):
 
     print("Metric breakdown for BEST SINGLE FOLD:")
     best_acc = metric_summary(best_fold_preds, f"{experiment}_fold_{best_fold_idx}.pth")
+    confusion_matrix_print(best_fold_preds, f"{experiment}_fold_{best_fold_idx}.pth")
 
     print("Metric breakdown for ENSEMBLE METHOD:")
     ensemble_acc = metric_summary(ensemble_preds, f"{experiment}_ensemble")
+    confusion_matrix_print(ensemble_preds, f"{experiment}_ensemble")
 
     return best_acc, ensemble_acc
 
