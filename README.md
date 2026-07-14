@@ -47,7 +47,7 @@ MSc-Project---Plant-disease-classification-CNN/
 └── run-pipeline.py                 # Script to construct the augmented dataset
 ```
 
-
+---
 
 ### Clone the repository
 
@@ -96,6 +96,9 @@ Now we can run the main distortion script. This script will create a dataset the
 ```bash
 python3 run_pipeline.py
 ```
+
+---
+
 ## Model training
 
 The training was originally written to run on my local Mac but due to the 5-fold cross-validation loop on thousands of images the training is very computationally intensive. As a result, this file also includes the necessary code adaptations to run on the cloud -- in this case Google Colab.
@@ -150,6 +153,8 @@ plantvil_dir = root_dir / "plantvillage_augmented" #change dataset name dependin
 
 Running the cell will result in the 5-fold cross validation training to execute and saves new **.pth** files containing weights for each independent fold
 
+---
+
 ## Model testing
 
 Once the training has been completed download and drop the saved **.pth** files into the local **models/** folder on VS_code. From here we can run the **model_testing.py** file which tests the two trained models on the unseen PlantDoc dataset. 
@@ -169,6 +174,8 @@ python3 training/model_testing.py
 If running on Google Colab follow the below step for setup.
 
 **-- ADD STEPS FOR COLAB SETUP**
+
+---
 
 ## Resulting performance metrics
 After testing is complete you should see a variety of performance metrics printed in the terminal. These metrics will include Accuracy, Precision, Recall, F1-score and confusion matrices and will be produced for both the baseline and augmented models. Again, we should see a print out for the best fold AND the ensemble method.
