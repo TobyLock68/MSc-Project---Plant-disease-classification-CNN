@@ -9,7 +9,6 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 from dataset_dictionary import PLANTDOC_TO_PLANTVILLAGE
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, ConfusionMatrixDisplay
-import matplotlib.pyplot as plt
 
 #same starting code as training with slight name change
 
