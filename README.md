@@ -1,6 +1,6 @@
  # MSc Project: Enhancing CNN robustness using an image distorting pipeline to create synthetically distorted dataset
 
-A computer vision pipeline designed to classify plant diseases across 38 distinct categories using a ResNet50 architecture. This project systematically investigates model robustness and domain generalization by comparing a baseline performance framework against a dual-layer stochastic environmental distortion training pipeline.
+A computer vision pipeline designed to classify plant diseases across 38 distinct categories using a ResNet50 architecture. This project aims to minimise loss and bridge the gap between lab-curated dataset and real-world deployment for plant disease classifcation, by comparing a baseline performance framework against a dual-layer stochastic environmental distortion training pipeline.
 
 ---
 
