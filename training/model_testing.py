@@ -113,6 +113,8 @@ def model_eval(experiment, best_fold_idx):
     ensemble_probs = []
     targets = []
 
+    individual_fold_preds = [[] for _ in range(5)]
+
     with torch.no_grad():
         for inputs, labels in test_loader:          #begins loop pf batched images
             inputs, labels = inputs.to(device), labels.to(device)
@@ -129,8 +131,12 @@ def model_eval(experiment, best_fold_idx):
                 # --- Ensemble approach ----
 
                 accum_probs = torch.zeros((batch_size, 38), device=device)
-                for model in model_list:
+
+                for idx, model in enumerate(model_list):
                     outputs = model(inputs)
+                    _, fold_pred = torch.max(outputs, 1)
+                    individual_fold_preds[idx].extend(fold_pred[valid].cpu().numpy())
+
                     accum_probs += torch.softmax(outputs, dim=1)
 
                 _, ens_preds = torch.max(accum_probs, 1)
@@ -209,6 +215,14 @@ def model_eval(experiment, best_fold_idx):
     print("Metric breakdown for ENSEMBLE METHOD:")
     ensemble_acc = metric_summary(ensemble_preds, f"{experiment}_ensemble")
     confusion_matrix_print(ensemble_preds, f"{experiment}_ensemble")
+
+    #print section for individual folds in testing
+    print(f"Individual fold accuracies ({experiment}):")
+    for idx in range(5):
+        f_preds = np.array(individual_fold_preds[idx])
+        correct = (f_preds == targets).sum()
+        acc = (correct/total)*100 if total > 0 else 0.0
+        print(f"Fold: {idx + 1} -- Accuracy: {acc:.4f}%")
 
     return best_acc, ensemble_acc
 
