@@ -112,6 +112,7 @@ if __name__ == "__main__":
 
         for epoch in range (1,16):      #15 training epochs for each fold as per literature
             model.train()
+            running_training_loss = 0.0
 
             for batch_idx, (inputs, batch_labels) in enumerate(train_loader, start=1):
                 inputs, batch_labels = inputs.to(device, non_blocking=True), batch_labels.to(device, non_blocking=True)
@@ -122,23 +123,35 @@ if __name__ == "__main__":
                 loss.backward()     #backward pass
                 optimiser.step()        #update weights
 
+                running_training_loss += loss.item()
+
                 if batch_idx % 100 == 0 or batch_idx == len(train_loader):
                     print(f" EPOCH = {epoch}/15 --- Batch {batch_idx}/{len(train_loader)}")
 
-                #validation stage within the training loop
-
+            #average training loss for each epoch
+            avg_training_loss = running_training_loss/len(train_loader)
+            
+            #validation stage within the training loop
             model.eval()
             validation_correct = 0
+            running_val_loss = 0.0
+
             with torch.no_grad():
                 for inputs, batch_labels in validation_loader:
                     inputs, batch_labels = inputs.to(device), batch_labels.to(device)
                     outputs = model(inputs)
+                    
+                    val_loss = criteria(outputs, batch_labels)
+                    running_val_loss += val_loss.item()
+
                     _, preds = torch.max(outputs, 1)
                     validation_correct += torch.sum(preds ==  batch_labels.data)
             
+            avg_val_loss = running_val_loss/ len(validation_loader)
             epoch_accuracy = (validation_correct.double() / len(val_idx)).item()
 
-            print(f" Epoch {epoch}/15 | Accuracy = {epoch_accuracy:.4f}")
+
+            print(f" Epoch {epoch}/15 | Training loss = {avg_training_loss:.4f} | Validation loss = {avg_val_loss:.4f}  | Accuracy = {epoch_accuracy:.4f}")
 
             #tracking the best weights for each fold
             if epoch_accuracy > best_validation_accuracy:
