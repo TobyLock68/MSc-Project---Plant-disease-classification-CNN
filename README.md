@@ -154,6 +154,10 @@ Running the cell will result in the 5-fold cross validation training to execute 
 
 Once the training has been completed download and drop the saved **.pth** files into the local **models/** folder on VS_code. From here we can run the **model_testing.py** file which tests the two trained models on the unseen PlantDoc dataset. 
 
+For testing the code runs two methods of testing: 
+1) We take the best fold from the training and use the weights from this fold in the model for testing 
+2) We create and ensemble method which averages the weights from all five folds and uses these calculated weights for the model testing
+
 The code once again can be run on a local machine but was altered to run on Google Colab to significantly reduce runtime. 
 
 If running local simply copy and execute the following command in the terminal:
@@ -161,6 +165,13 @@ If running local simply copy and execute the following command in the terminal:
 ```bash
 python3 training/model_testing.py
 ```
--- Need to write about whether or not the code uses all 5 folds 
--- Need to add the colab optimisation
--- Talk about performance metrics produced
+
+If running on Google Colab follow the below step for setup.
+
+**-- ADD STEPS FOR COLAB SETUP**
+
+## Resulting performance metrics
+After testing is complete you should see a variety of performance metrics printed in the terminal. These metrics will include Accuracy, Precision, Recall, F1-score and confusion matrices and will be produced for both the baseline and augmented models. Again, we should see a print out for the best fold AND the ensemble method.
+
+Example terminal:
+
