@@ -130,22 +130,22 @@ def apply_layer_2(image):
     return choice(image)
 
 
-# 2. Setup your local paths
+# setup of local paths
 input_image_path = Path("/Users/tobylock/Desktop/MSc-Project---Plant-disease-classification-CNN/data/plantvillage dataset/color/Apple___Apple_scab/0cbfa4fa-63d8-43ce-9385-ff140e524b69___FREC_Scab 3164.JPG")
 output_dir = Path("my_custom_distortions")
 output_dir.mkdir(exist_ok=True)
 
-# 3. Load the original image using OpenCV
+# load the original image
 img = cv2.imread(str(input_image_path))
 
 if img is None:
     raise FileNotFoundError(f"Could not load your image at: {input_image_path}. Check the path string!")
 
-# Save a copy of the pristine baseline image
+# Save a copy of the original image
 cv2.imwrite(str(output_dir / "0_original.jpg"), img)
 print("Saved: 0_original.jpg")
 
-# 4. Process Layer 1 Distortions (OpenCV / NumPy)
+# Process Layer 1 Distortions (OpenCV / NumPy)
 print("\n--- Processing Layer 1 (Sensor/Camera Environment) ---")
 
 blur_sample = add_motion_blur(img.copy())
@@ -160,7 +160,7 @@ noise_sample = add_noise(img.copy())
 cv2.imwrite(str(output_dir / "layer1_noise.jpg"), noise_sample)
 print("Saved: layer1_noise.jpg")
 
-# 5. Process Layer 2 Distortions (Albumentations Weather Effects)
+# Process Layer 2 Distortions (Albumentations Weather Effects)
 print("\n--- Processing Layer 2 (Atmospheric/Weather Effects) ---")
 
 fog_sample = add_fog(img.copy())
@@ -171,4 +171,4 @@ flare_sample = add_lens_flare(img.copy())
 cv2.imwrite(str(output_dir / "layer2_lens_flare.jpg"), flare_sample)
 print("Saved: layer2_lens_flare.jpg")
 
-print(f"\nAll set! Open the '{output_dir}/' directory to view your thesis figures.")
+print(f"\nFinished -- Images found in '{output_dir}/' directory")
