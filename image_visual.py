@@ -55,14 +55,14 @@ def add_light_intensity(image):
     return np.clip(blended_img, 0, 255).astype(np.uint8)
 
 
-def add_noise(image):
+def add_noise(image, mode = None):
 
     img_float = image.astype(np.float32)
 
     #Logic for random assignment of gaussian or stochastic noise
     mode = random.randint(0,1)
 
-    if mode == 1: #stochastic
+    if mode == 1 or mode == "stochastic": #stochastic
         noise = np.random.randint(-30,30, image.shape)
     else:   #gaussian
         hyper_p = random.randint(10,50)
@@ -156,9 +156,13 @@ light_sample = add_light_intensity(img.copy())
 cv2.imwrite(str(output_dir / "layer1_light_intensity.jpg"), light_sample)
 print("Saved: layer1_light_intensity.jpg")
 
-noise_sample = add_noise(img.copy())
-cv2.imwrite(str(output_dir / "layer1_noise.jpg"), noise_sample)
-print("Saved: layer1_noise.jpg")
+gaussian_sample = add_noise(img.copy(), mode="gaussian")
+cv2.imwrite(str(output_dir / "layer1_gaussian_noise.jpg"), gaussian_sample)
+print("Saved: layer1_gaussian_noise.jpg")
+
+stochastic_sample = add_noise(img.copy(), mode="stochastic")
+cv2.imwrite(str(output_dir / "layer1_stochastic_noise.jpg"), stochastic_sample)
+print("Saved: layer1_stochastic_noise.jpg")
 
 # Process Layer 2 Distortions (Albumentations Weather Effects)
 print("\n--- Processing Layer 2 (Atmospheric/Weather Effects) ---")
