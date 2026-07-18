@@ -3,19 +3,19 @@ from scipy.stats import wilcoxon
 
 # input final test accuracies for each individual fold after testing
 baseline_fold_accuracies = np.array([
-    34.50, # Fold 1 Test Acc %
-    36.20, # Fold 2 Test Acc %
-    32.10, # Fold 3 Test Acc %
-    35.80, # Fold 4 Test Acc %
-    38.90  # Fold 5 Test Acc % (best baseline fold)
+    15.5009, # Fold 1 Test Acc %
+    15.3282, # Fold 2 Test Acc %
+    15.1986, # Fold 3 Test Acc %
+    14.5078, # Fold 4 Test Acc %
+    14.2055  # Fold 5 Test Acc % (best baseline fold)
 ])
 
 augmented_fold_accuracies = np.array([
-    41.20, # Fold 1 Test Acc %
-    45.50, # Fold 2 Test Acc % (best augmented fold)
-    40.80, # Fold 3 Test Acc %
-    43.10, # Fold 4 Test Acc %
-    44.60  # Fold 5 Test Acc %
+    15.7168, # Fold 1 Test Acc %
+    15.4577, # Fold 2 Test Acc % (best augmented fold)
+    15.9758, # Fold 3 Test Acc %
+    15.5872, # Fold 4 Test Acc %
+    14.4214  # Fold 5 Test Acc %
 ])
 
 #paired Wilcoxon signed-rank test
