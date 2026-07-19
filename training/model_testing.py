@@ -46,7 +46,7 @@ model_save_dir = root_dir/"models"
 model_save_dir.mkdir(exist_ok=True)
 
 #best fold for each training run determined by average fold accuracy
-baseline_best_fold = 5
+baseline_best_fold = 2
 augemented_best_fold = 2
 
 # --- Data setup ---
