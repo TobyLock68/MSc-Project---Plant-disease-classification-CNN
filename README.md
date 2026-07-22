@@ -131,8 +131,10 @@ from google.colab import drive
 drive.mount('/content/drive')
 
 # 2. Unzip your dataset from your Drive folder into Colab's local space
+!unzip -q "/content/drive/MyDrive/MSc_Project/PlantVillage.zip" -d "/content/"
+print("Baseline Dataset unzipped")
 !unzip -q "/content/drive/MyDrive/MSc_Project/plantvillage_augmented.zip" -d "/content/"
-print("Augmented Dataset unzipped!")
+print("Augmented Dataset unzipped")
 ```
 
 #### Step 4: Paste and execute the training code
