@@ -175,7 +175,44 @@ python3 training/model_testing.py
 
 If running on Google Colab follow the below step for setup.
 
-**-- ADD STEPS FOR COLAB SETUP**
+1) Mount google drive, unzip the required datasets and introduce the dataset dictionary and model weights to the working environment:
+
+```bash
+# 1. Mount Google Drive
+from google.colab import drive
+drive.mount('/content/drive')
+
+# 2. Extract Datasets directly into Colab's space
+!unzip -q "/content/drive/MyDrive/MSc_Project/PlantVillage.zip" -d "/content/"
+!unzip -q "/content/drive/MyDrive/MSc_Project/PlantDoc-Dataset.zip" -d "/content/PlantDoc-Dataset"
+print("Datasets extracted")
+
+# 3. Bring in the dictionary script and your model weight checkpoints
+!cp "/content/drive/MyDrive/MSc_Project/dataset_dictionary.py" "/content/dataset_dictionary.py"
+!mkdir -p /content/models
+!cp /content/drive/MyDrive/models/*.pth /content/models/
+print("Python modules and model weights synced.")
+```
+2) A problem i encounted was my mac introduced random meta data that interferred with code execution so this was tackled using the following code
+
+```bash
+%%bash
+
+echo "Cleaning up hidden macOS metadata..."
+
+find /content/ -name "__MACOSX" -type d -exec rm -rf {} + 2>/dev/null
+find /content/ -name "._*" -type f -delete 2>/dev/null
+
+if [ -d "/content/plantvillage dataset/color/color" ]; then
+    echo "Fixing nested PlantVillage directory structure..."
+    mv "/content/plantvillage dataset/color/color/"* "/content/plantvillage dataset/color/" 2>/dev/null
+    rm -rf "/content/plantvillage dataset/color/color"
+fi
+
+echo "Workspace cleaned"
+```
+
+3) Copy the entire training code into another code block and run. Be sure to comment the local setup section and un-comment colab setup before running.
 
 ---
 
@@ -184,3 +221,28 @@ After testing is complete you should see a variety of performance metrics printe
 
 Example terminal:
 
+```text
+
+RAW DATA SAVE TO: /content/models/resnet50_baseline_eval_data.npz
+Metric breakdown for BEST SINGLE FOLD:
+Accuracy for resnet50_baseline_fold_2.pth on PlantDoc test = 15.33%
+Recall for resnet50_baseline_fold_2.pth on PlantDoc test = 0.12%
+Precision for resnet50_baseline_fold_2.pth on PlantDoc test = 0.23%
+F1-score for resnet50_baseline_fold_2.pth on PlantDoc test = 0.10%
+
+ CONFUSION MATRIX BREAKDOWN (resnet50_baseline_fold_2.pth)
+Class Name                               | TP    | FP    | FN    | TN   
+Apple___Apple_scab                       | 3     | 3     | 50    | 1746 
+Apple___Cedar_apple_rust                 | 0     | 2     | 45    | 1755 
+
+....
+
+Individual fold accuracies (resnet50_baseline):
+Fold: 1 -- Accuracy: 15.5009%
+Fold: 2 -- Accuracy: 15.3282%
+Fold: 3 -- Accuracy: 15.1986%
+Fold: 4 -- Accuracy: 14.5078%
+Fold: 5 -- Accuracy: 14.2055%
+
+....
+```
