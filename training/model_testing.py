@@ -191,29 +191,41 @@ def model_eval(experiment, best_fold_idx):
 
     #funtion for performance metrics
 
-    def metric_summary(preds, label_text):
+    def metric_summary(preds, targets, label_text, average_method='macro'):
+        total=len(targets)
         correct = (preds == targets).sum()
         accuracy = (correct/total)*100 if total > 0 else 0.0
 
     #recall, precision and F1-score using Scikit leanr
 
-        precision, recall, f1_score, _ = precision_recall_fscore_support(
-            targets, preds, average='macro', zero_division=0
+        precision_raw, recall_raw, _, _ = precision_recall_fscore_support(
+            targets, preds, average=average_method, zero_division=0
         )
 
-        print(f"Accuracy for {label_text} on PlantDoc test = {accuracy:.2f}%")
-        print(f"Recall for {label_text} on PlantDoc test = {recall:.2f}%")
-        print(f"Precision for {label_text} on PlantDoc test = {precision:.2f}%")
-        print(f"F1-score for {label_text} on PlantDoc test = {f1_score:.2f}%")
+        #calc. f1-score from raw outputs
+        if (precision_raw + recall_raw)> 0:
+            f1_raw = 2*(precision_raw*recall_raw)/(precision_raw+recall_raw)
+        else:
+            f1_raw = 0.0
 
-        return accuracy
+        print(f"Accuracy for {label_text} on PlantDoc test = {accuracy:.2f}%")
+        print(f"Recall for {label_text} on PlantDoc test = {recall_raw*100:.2f}%")
+        print(f"Precision for {label_text} on PlantDoc test = {precision_raw*100:.2f}%")
+        print(f"F1-score for {label_text} on PlantDoc test = {f1_raw*100:.2f}%")
+
+        return {
+            "accuracy": accuracy,
+            "precision": precision_raw * 100,
+            "recall": recall_raw * 100,
+            "f1_score": f1_raw * 100
+        }
 
     print("Metric breakdown for BEST SINGLE FOLD:")
-    best_acc = metric_summary(best_fold_preds, f"{experiment}_fold_{best_fold_idx}.pth")
+    best_acc = metric_summary(best_fold_preds, targets, f"{experiment}_fold_{best_fold_idx}.pth")
     confusion_matrix_print(best_fold_preds, f"{experiment}_fold_{best_fold_idx}.pth")
 
     print("Metric breakdown for ENSEMBLE METHOD:")
-    ensemble_acc = metric_summary(ensemble_preds, f"{experiment}_ensemble")
+    ensemble_acc = metric_summary(ensemble_preds, targets, f"{experiment}_ensemble")
     confusion_matrix_print(ensemble_preds, f"{experiment}_ensemble")
 
     #print section for individual folds in testing
