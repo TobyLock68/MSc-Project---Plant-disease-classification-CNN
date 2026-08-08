@@ -3,11 +3,11 @@ from scipy.stats import wilcoxon
 
 # input final test accuracies for each individual fold after testing
 baseline_fold_accuracies = np.array([
-    15.5009, # Fold 1 Test Acc %
-    15.3282, # Fold 2 Test Acc % (best baseline fold)
-    15.1986, # Fold 3 Test Acc %
-    14.5078, # Fold 4 Test Acc %
-    14.2055  # Fold 5 Test Acc %
+    15.3282, # Fold 1 Test Acc %
+    15.2850, # Fold 2 Test Acc % (best baseline fold)
+    15.2850, # Fold 3 Test Acc %
+    14.5509, # Fold 4 Test Acc %
+    14.1623  # Fold 5 Test Acc %
 ])
 
 augmented_fold_accuracies = np.array([
