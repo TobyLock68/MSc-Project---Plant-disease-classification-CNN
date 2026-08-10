@@ -13,7 +13,7 @@ from sklearn.model_selection import StratifiedKFold
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 
-def seed_reproducibility(seed=42):
+def seed_reproducibility(seed=42):  #change to 15 for second run
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
@@ -21,7 +21,7 @@ def seed_reproducibility(seed=42):
     if torch.backends.mps.is_available():
         torch.mps.manual_seed(seed)
 
-seed_reproducibility(42)
+seed_reproducibility(42)    #or 15 for second run
 
 #directory setup for google colab
 root_dir = Path("/content")
