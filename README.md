@@ -44,7 +44,9 @@ MSc-Project---Plant-disease-classification-CNN/
 ├── image_visual.py                 # Provides a visual insight into each distortions
 ├── README.md                       # Project overview doc
 ├── requirements.txt                # Project dependencies
-└── run-pipeline.py                 # Script to construct the augmented dataset
+├── run-pipeline.py                 # Script to construct the augmented dataset
+├── plot_auc.py                     # Script to plot the AUC graph using the .npz files created during testing
+└── wilcoxon_significance.py        # Test statisitcal significance between the two runs in individual folds
 ```
 
 ---
@@ -245,4 +247,25 @@ Fold: 4 -- Accuracy: 14.5078%
 Fold: 5 -- Accuracy: 14.2055%
 
 ....
+```
+## AUC graph production and statistical testing
+
+After testing the code will produce an **.npz** file for both the baseline and augmented models. This should save directly to the models folder in the workspace/ google drive. From here, to produce the AUC graph you simply need to run the **plot_auc.py** file which automatically takes the content from the .npz file and plots into graph form.
+
+```bash
+python3 plot_auc.py
+```
+To understand whether the results collected are statistically significant or not. We take the inidividual fold accuracies from both run 1 and run two (dictated by the new seed selection) input them into Numpy array area highlighted in the **wilcoxon_significance.py** file and run using the following command:
+
+```bash
+python3 wilcoxon_significance.py
+```
+This will produce and easy to read result section in the terminal like the following:
+
+``text
+WILCOXON SIGNED-RANK TEST RESULTS
+Baseline Mean Accuracy  : 15.0259%
+Augmented Mean Accuracy : 15.4836%
+W-Statistic            : 41.0
+p-value                : 0.09668
 ```
