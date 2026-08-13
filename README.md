@@ -81,6 +81,21 @@ pip install -r requirements.txt
 
 The scripts are to be run sequentially from the project root directory in order to parse, visualise distortions and construct the augmented dataset.
 
+To download the datasets .zip files visit the following links to obtain the versions of the datasets used in this project:
+
+#### PlantVillage data:
+```text
+https://www.kaggle.com/datasets/abdallahalidev/plantvillage-dataset
+```
+This dataset has 3 subfolder 'greyscale', 'color' and 'segmented'. This project only uses the 'color' subfolder for training.
+
+#### PlantDoc data:
+```text
+https://www.kaggle.com/datasets/abdulhasibuddin/plant-doc-dataset
+```
+
+The PlantDoc dataset comes seperated into training and testing subfolders. In this porject the entirety of PlantDoc is used for testing so these folders can be merged into one.
+
 Before running an augmentations ot training we need to verify the class labels in the two datasets are aligned/ match. This prevents class labelling errors later down the line and ensure that in training a testing phases the model is generalising correctly.
 
 ```bash
@@ -262,7 +277,7 @@ python3 wilcoxon_significance.py
 ```
 This will produce and easy to read result section in the terminal like the following:
 
-``text
+```text
 WILCOXON SIGNED-RANK TEST RESULTS
 Baseline Mean Accuracy  : 15.0259%
 Augmented Mean Accuracy : 15.4836%
