@@ -127,7 +127,7 @@ If your local machine has the capabilities to run this intensive code simply un-
 ```bash
 python3 model_training.py
 ```
-To train the models in th cloud follow this walkthrough:
+To train the models in the cloud follow this walkthrough:
 
 #### Step 1: Upload the datasets
 Compress the original unaltered PlantVillage dataset and the augmented target dataset into a **.zip** file and upload it directly into the Google Drive storage area (inside a folder named MSc_Project/)
@@ -270,7 +270,7 @@ After testing the code will produce an **.npz** file for both the baseline and a
 ```bash
 python3 plot_auc.py
 ```
-To understand whether the results collected are statistically significant or not. We take the inidividual fold accuracies from both run 1 and run two (dictated by the new seed selection) input them into Numpy array area highlighted in the **wilcoxon_significance.py** file and run using the following command:
+To understand whether the results collected are statistically significant or not. We take the individual fold accuracies from both run 1 and run two (dictated by the new seed selection) input them into Numpy array area highlighted in the **wilcoxon_significance.py** file and run using the following command:
 
 ```bash
 python3 wilcoxon_significance.py
