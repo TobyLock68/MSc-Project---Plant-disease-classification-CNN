@@ -1,4 +1,4 @@
- # MSc Project: Enhancing CNN robustness using an image distorting pipeline to create synthetically distorted dataset
+ # MSc Project: Bridging the Lab-to-Field Gap in Plant Disease Classification Using an Image Distorting Pipeline
 
 A computer vision pipeline designed to classify plant diseases across 38 distinct categories using a ResNet50 architecture. This project aims to minimise loss and bridge the gap between lab-curated dataset and real-world deployment for plant disease classifcation, by comparing a baseline performance framework against a dual-layer stochastic environmental distortion training pipeline.
 
